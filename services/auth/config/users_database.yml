@@ -1,5 +1,5 @@
 users:
-  - username: admin
+  admin:
     displayname: Admin User
     email: admin@jxlxx.org
     groups:
