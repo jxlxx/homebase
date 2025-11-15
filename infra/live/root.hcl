@@ -1,9 +1,9 @@
 locals {
   project          = "homebase"
   environment      = "prod"
-  bucket_name      = "REPLACE_WITH_BUCKET_NAME"
-  bucket_region    = "nuremberg"
-  bucket_endpoint  = "https://REPLACE_WITH_OBJECT_STORAGE_ENDPOINT"
+  bucket_name      = get_env("BUCKET_NAME")
+  bucket_region    = get_env("BUCKET_REGION")
+  bucket_endpoint  = get_env("BUCKET_ENDPOINT")
 }
 
 remote_state {
@@ -39,7 +39,7 @@ terraform {
     }
     hetznerdns = {
       source  = "timohirt/hetznerdns"
-      version = ">= 3.2.0"
+      version = ">= 2.2.0"
     }
   }
 }

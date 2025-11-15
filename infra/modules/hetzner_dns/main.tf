@@ -1,10 +1,5 @@
 terraform {
-  required_providers {
-    hetznerdns = {
-      source  = "timohirt/hetznerdns"
-      version = ">= 3.2.0"
-    }
-  }
+  backend "s3" {}
 }
 
 resource "hetznerdns_zone" "this" {
