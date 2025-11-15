@@ -82,6 +82,7 @@ cp traefik/.env.example traefik/.env    # repeat for each service and edit secre
 `deploy-all.sh` ensures the shared `proxy` network exists and then runs `docker compose up -d` for Traefik, Authelia, Home, Gitea, Matrix, HedgeDoc, and Excalidraw. Manage any stack individually with `docker compose -f services/<stack>/docker-compose.yml up -d`.
 
 - **Matrix Synapse** uses a templated config: edit `services/matrix/.env` (copied from `.env.example`) with your secrets and domain, and `services/deploy-all.sh` automatically renders `services/matrix/config/homeserver.yaml` from `homeserver.yaml.example` on each deploy. You can still customize the rendered file afterwards (it’s ignored by Git) if you need additional tweaks.
+- The `.env.example` now ships with `POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C --lc-collate=C --lc-ctype=C` so new Postgres volumes satisfy Synapse’s `C` collation requirement. If you previously created the `matrix_synapse-db-data` volume without those settings, delete it (`docker volume rm matrix_synapse-db-data`) and rerun `docker compose -f services/matrix/docker-compose.yml up -d` so Postgres reinitialises with the correct locale.
 
 **Private repository tips**
 
