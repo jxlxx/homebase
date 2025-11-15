@@ -7,14 +7,14 @@ terraform {
 }
 
 locals {
-  repo_url    = "github.com/jxlxx"
+  repo_url    = "https://github.com/jxlxx/homebase.git"
   repo_branch = "main"
 }
 
 inputs = {
   name         = "apps-node-1"
   location     = "fsn1"
-  server_type  = "cx21"
+  server_type  = "cx23"
   image        = "ubuntu-24.04"
   ssh_keys     = ["admin@jxlxx.org"]
   backups      = true

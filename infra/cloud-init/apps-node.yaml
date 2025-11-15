@@ -1,10 +1,8 @@
 #cloud-config
-package_update: true
-package_upgrade: true
-packages:
-  - docker.io
-  - docker-compose-plugin
-  - git
+apt:
+    sources:
+      docker.list:
+        source: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable
 
 write_files:
   - path: /srv/services/.env
@@ -14,8 +12,13 @@ write_files:
     permissions: '0644'
 
 runcmd:
-  - [ sh, -c, 'systemctl enable docker --now' ]
-  - [ sh, -c, 'mkdir -p /srv' ]
-  - [ sh, -c, 'if [ ! -d /srv/homebase ]; then git clone ${repo_url} /srv/homebase; else cd /srv/homebase && git pull; fi' ]
-  - [ sh, -c, 'cd /srv/homebase && docker compose -f services/traefik/docker-compose.yml up -d' ]
-  - [ sh, -c, 'cd /srv/homebase/services && chmod +x deploy-all.sh && ./deploy-all.sh' ]
+  - sudo install -m 0755 -d /etc/apt/keyrings
+  - sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  - sudo chmod a+r /etc/apt/keyrings/docker.gpg
+  - sudo apt-get update
+  - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  - systemctl enable docker --now
+  - mkdir -p /opt
+  - git clone --branch ${repo_branch} ${repo_url} /opt/homebase
+  - cd /opt/homebase && docker compose -f services/traefik/docker-compose.yml up -d
+  - cd /opt/homebase/services && chmod +x deploy-all.sh && ./deploy-all.sh
