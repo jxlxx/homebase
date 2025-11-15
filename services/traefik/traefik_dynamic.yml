@@ -2,7 +2,8 @@ http:
   middlewares:
     authelia-auth:
       forwardAuth:
-        address: http://auth:9091/api/verify?rd=https://auth.jxlxx.org/
+        # address: http://auth:9091/api/verify?rd=https://auth.jxlxx.org/
+        address: http://auth:9091/api/verify?rd=http://auth.jxlxx.org/
         trustForwardHeader: true
         authResponseHeaders:
           - Remote-User

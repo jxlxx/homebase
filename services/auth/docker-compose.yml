@@ -14,8 +14,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.auth.rule=Host(`auth.jxlxx.org`)"
-      - "traefik.http.routers.auth.entrypoints=websecure"
-      - "traefik.http.routers.auth.tls.certresolver=le"
+      # - "traefik.http.routers.auth.entrypoints=websecure"
+      - "traefik.http.routers.auth.entrypoints=web"
+      # - "traefik.http.routers.auth.tls.certresolver=le"
       - "traefik.http.services.auth.loadbalancer.server.port=9091"
 
 networks:

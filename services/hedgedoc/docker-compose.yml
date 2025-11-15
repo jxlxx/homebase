@@ -15,9 +15,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hedgedoc.rule=Host(`hedgedoc.jxlxx.org`)"
-      - "traefik.http.routers.hedgedoc.entrypoints=websecure"
-      - "traefik.http.routers.hedgedoc.tls.certresolver=le"
-      - "traefik.http.routers.hedgedoc.middlewares=authelia-auth@file"
+      - "traefik.http.routers.hedgedoc.entrypoints=web"
+      # - "traefik.http.routers.hedgedoc.entrypoints=websecure"
+      # - "traefik.http.routers.hedgedoc.tls.certresolver=le"
+      # - "traefik.http.routers.hedgedoc.middlewares=authelia-auth@file"
       - "traefik.http.services.hedgedoc.loadbalancer.server.port=3000"
 
   hedgedoc-db:

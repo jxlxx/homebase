@@ -5,7 +5,7 @@ server:
 log:
   level: info
 
-default_redirection_url: https://home.jxlxx.org
+default_redirection_url: http://home.jxlxx.org
 
 totp:
   issuer: jxlxx.org
@@ -25,6 +25,18 @@ access_control:
         - home.jxlxx.org
       policy: two_factor
 
+
+# session:
+#   name: authelia_session
+#   cookies:
+#     - domain: jxlxx.org
+#       authelia_url: http://auth.jxlxx.org
+#       default_redirection_url: http://home.jxlxx.org
+#       same_site: lax
+#       secure: false            # allow HTTP
+#   expiration: 1h
+  # inactivity: 5m
+
 session:
   name: authelia_session
   secret: REPLACE_WITH_LONG_RANDOM_VALUE
@@ -32,6 +44,7 @@ session:
   inactivity: 5m
   domain: jxlxx.org
   same_site: lax
+  secure: false
 
 storage:
   encryption_key: REPLACE_WITH_LONG_RANDOM_VALUE

@@ -11,15 +11,18 @@ services:
       - synapse-db
     volumes:
       - synapse-data:/data
+      - ./config/homeserver.yaml:/data/homeserver.yaml
+      - ./config/log.config:/data/log.config
     networks:
       - proxy
       - internal
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.matrix.rule=Host(`matrix.jxlxx.org`)"
-      - "traefik.http.routers.matrix.entrypoints=websecure"
-      - "traefik.http.routers.matrix.tls.certresolver=le"
-      - "traefik.http.routers.matrix.middlewares=authelia-auth@file"
+      # - "traefik.http.routers.matrix.entrypoints=websecure"
+      - "traefik.http.routers.matrix.entrypoints=web"
+      # - "traefik.http.routers.matrix.tls.certresolver=le"
+      # - "traefik.http.routers.matrix.middlewares=authelia-auth@file"
       - "traefik.http.services.matrix.loadbalancer.server.port=8008"
 
   synapse-db:
