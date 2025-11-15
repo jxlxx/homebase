@@ -1,5 +1,5 @@
 include {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 terraform {
@@ -7,7 +7,8 @@ terraform {
 }
 
 locals {
-  repo_url = "REPLACE_WITH_YOUR_REPO_URL"
+  repo_url    = "github.com/jxlxx"
+  repo_branch = "main"
 }
 
 inputs = {
@@ -15,7 +16,7 @@ inputs = {
   location     = "fsn1"
   server_type  = "cx21"
   image        = "ubuntu-24.04"
-  ssh_keys     = ["REPLACE_WITH_HCLOUD_SSH_KEY_NAME"]
+  ssh_keys     = ["admin@jxlxx.org"]
   backups      = true
   enable_ipv6  = true
   labels = {
@@ -24,6 +25,7 @@ inputs = {
     role    = "apps"
   }
   user_data = templatefile("${get_repo_root()}/infra/cloud-init/apps-node.yaml", {
-    repo_url = local.repo_url
+    repo_url    = local.repo_url
+    repo_branch = local.repo_branch
   })
 }

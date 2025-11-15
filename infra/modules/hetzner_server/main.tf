@@ -1,10 +1,5 @@
 terraform {
-  required_providers {
-    hcloud = {
-      source  = "hetznercloud/hcloud"
-      version = ">= 1.45.0"
-    }
-  }
+  backend "s3" {}
 }
 
 resource "hcloud_server" "this" {

@@ -40,7 +40,7 @@ The `bootstrap/` directory creates an S3 bucket on Hetzner Object Storage (or an
    ```
 
 4. Collect the outputs (`bucket_name`, `object_storage_endpoint`, `object_storage_region`).
-5. Update `infra/live/terragrunt.hcl` with those values.
+5. Update `infra/live/root.hcl` with those values.
 
 Terragrunt uses the same object-storage credentials from the environment variables when configuring the S3 backend.
 

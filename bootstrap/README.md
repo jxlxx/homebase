@@ -29,7 +29,7 @@ export TF_VAR_object_storage_secret_key="<hetzner-secret-key>"
    terraform apply
    ```
 
-3. Record the outputs (`bucket_name`, `object_storage_endpoint`, `object_storage_region`). Terragrunt uses those values in `infra/live/terragrunt.hcl`.
+3. Record the outputs (`bucket_name`, `object_storage_endpoint`, `object_storage_region`). Terragrunt uses those values in `infra/live/root.hcl`.
 
 ## Migrate bootstrap to the remote backend
 
@@ -64,4 +64,4 @@ export OBJECT_STORAGE_ACCESS_KEY="<hetzner-access-key>"
 export OBJECT_STORAGE_SECRET_KEY="<hetzner-secret-key>"
 ```
 
-Update `infra/live/terragrunt.hcl` with the bucket name, region string, and endpoint. All Terragrunt stacks will then use the shared S3 backend for remote state.
+Update `infra/live/root.hcl` with the bucket name, region string, and endpoint. All Terragrunt stacks will then use the shared S3 backend for remote state.
