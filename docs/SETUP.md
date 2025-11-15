@@ -9,17 +9,17 @@ This document explains how to bootstrap Hetzner Object Storage for Terraform sta
 - Docker + Docker Compose plugin (for local verification or manual runs)
 - Hetzner Cloud account with:
   - A **Hetzner Cloud API token** for provisioning servers (`HCLOUD_TOKEN`)
-  - An **API token for Hetzner DNS** (create one in the DNS Console; set as `HETZNER_DNS_API_TOKEN`)
   - A **Hetzner Object Storage project** with access + secret keys (Hetzner Console → Object Storage → Access Keys)
+- Cloudflare account with the `jxlxx.org` zone delegated to Cloudflare nameservers and an **API token** that has Zone → DNS:Edit + Zone:Read permissions (export as `CLOUDFLARE_API_TOKEN`)
 - SSH key uploaded to Hetzner Cloud so the server module can reference it by name
 
 Export the credentials before using Terragrunt:
 
 ```bash
 export HCLOUD_TOKEN="<hcloud-token>"
-export HETZNER_DNS_API_TOKEN="<hetzner-dns-token>"
 export OBJECT_STORAGE_ACCESS_KEY="<object-storage-access-key>"
 export OBJECT_STORAGE_SECRET_KEY="<object-storage-secret-key>"
+export CLOUDFLARE_API_TOKEN="<cloudflare-token>"
 ```
 
 ## 2. Bootstrap remote state
@@ -58,13 +58,15 @@ All live stacks reside under `infra/live`.
 
    Parameters such as location, server type, SSH key name, repo URL, and branch are set inside the Terragrunt file. Update them as needed before applying. For private repositories, you can either embed a short-lived personal access token in the HTTPS URL or configure an SSH deploy key and switch `repo_url` to the SSH form (`git@...`) after adding the key to cloud-init (see notes below).
 
-2. **DNS** – provisions the `jxlxx.org` zone using Hetzner DNS and creates A records for every service (including Authelia at `auth.jxlxx.org`):
+2. **DNS** – provisions the `jxlxx.org` zone on Cloudflare and creates A records for every service (including Authelia at `auth.jxlxx.org`):
 
    ```bash
    cd ../dns
    terragrunt init
    terragrunt apply
    ```
+
+   This stack now targets Cloudflare. Make sure the domain’s nameservers point to Cloudflare and that `CLOUDFLARE_API_TOKEN` is exported before running Terragrunt. The stack reads the Hetzner node IP from the `apps` dependency and creates `git`, `matrix`, `hedgedoc`, `excalidraw`, `home`, and `auth` A records.
 
 3. Repeat the pattern for other environments by adding folders under `infra/live` and adjusting Terragrunt inputs.
 

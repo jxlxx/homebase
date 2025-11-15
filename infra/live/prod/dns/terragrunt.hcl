@@ -3,7 +3,7 @@ include {
 }
 
 terraform {
-  source = "../../../modules/hetzner_dns"
+  source = "../../../modules/cloudflare_dns"
 }
 
 dependency "apps" {
@@ -11,18 +11,18 @@ dependency "apps" {
 }
 
 locals {
-  domain     = "jxlxx.org"
-  app_ip     = dependency.apps.outputs.ipv4
+  zone_name = "jxlxx.org"
   subdomains = ["git", "matrix", "hedgedoc", "excalidraw", "home", "auth"]
 }
 
 inputs = {
-  domain  = local.domain
+  zone_name = local.zone_name
   records = [
     for subdomain in local.subdomains : {
-      name  = subdomain
-      type  = "A"
-      value = local.app_ip
+      name    = subdomain
+      type    = "A"
+      value   = dependency.apps.outputs.ipv4
+      proxied = false
     }
   ]
 }
