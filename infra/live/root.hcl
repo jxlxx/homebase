@@ -1,9 +1,9 @@
 locals {
-  project          = "homebase"
-  environment      = "prod"
-  bucket_name      = get_env("BUCKET_NAME")
-  bucket_region    = get_env("BUCKET_REGION")
-  bucket_endpoint  = get_env("BUCKET_ENDPOINT")
+  project         = "homebase"
+  environment     = "prod"
+  bucket_name     = get_env("BUCKET_NAME")
+  bucket_region   = get_env("BUCKET_REGION")
+  bucket_endpoint = get_env("BUCKET_ENDPOINT")
 }
 
 remote_state {
@@ -24,7 +24,7 @@ remote_state {
 
 inputs = {
   hcloud_token          = get_env("HCLOUD_TOKEN")
-  hetznerdns_api_token  = get_env("HETZNER_DNS_API_TOKEN")
+  cloudflare_api_token  = get_env("CLOUDFLARE_API_TOKEN")
 }
 
 generate "provider" {
@@ -37,9 +37,9 @@ terraform {
       source  = "hetznercloud/hcloud"
       version = ">= 1.45.0"
     }
-    hetznerdns = {
-      source  = "timohirt/hetznerdns"
-      version = ">= 2.2.0"
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = ">= 4.0.0"
     }
   }
 }
@@ -50,9 +50,9 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
-variable "hetznerdns_api_token" {
+variable "cloudflare_api_token" {
   type        = string
-  description = "Hetzner DNS API token"
+  description = "Cloudflare API token"
   sensitive   = true
 }
 
@@ -60,8 +60,8 @@ provider "hcloud" {
   token = var.hcloud_token
 }
 
-provider "hetznerdns" {
-  api_token = var.hetznerdns_api_token
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
 EOF2
 }
