@@ -1,0 +1,21 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - docker.io
+  - docker-compose-plugin
+  - git
+
+write_files:
+  - path: /srv/services/.env
+    content: |
+      # placeholder for shared environment overrides
+    owner: root:root
+    permissions: '0644'
+
+runcmd:
+  - [ sh, -c, 'systemctl enable docker --now' ]
+  - [ sh, -c, 'mkdir -p /srv' ]
+  - [ sh, -c, 'if [ ! -d /srv/homebase ]; then git clone ${repo_url} /srv/homebase; else cd /srv/homebase && git pull; fi' ]
+  - [ sh, -c, 'cd /srv/homebase && docker compose -f services/traefik/docker-compose.yml up -d' ]
+  - [ sh, -c, 'cd /srv/homebase/services && chmod +x deploy-all.sh && ./deploy-all.sh' ]

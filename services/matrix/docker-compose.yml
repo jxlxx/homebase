@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: synapse
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - synapse-db
+    volumes:
+      - synapse-data:/data
+    networks:
+      - proxy
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.matrix.rule=Host(`matrix.jxlxx.org`)"
+      - "traefik.http.routers.matrix.entrypoints=websecure"
+      - "traefik.http.routers.matrix.tls.certresolver=le"
+      - "traefik.http.routers.matrix.middlewares=authelia-auth@file"
+      - "traefik.http.services.matrix.loadbalancer.server.port=8008"
+
+  synapse-db:
+    image: postgres:15-alpine
+    container_name: synapse-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - synapse-db-data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - internal
+
+volumes:
+  synapse-data:
+  synapse-db-data:
+
+networks:
+  proxy:
+    external: true
+  internal:
+    internal: true

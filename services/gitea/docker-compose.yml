@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  gitea:
+    image: gitea/gitea:1.21.11-rootless
+    container_name: gitea
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - gitea-db
+    volumes:
+      - gitea-data:/var/lib/gitea
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - proxy
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitea.rule=Host(`git.jxlxx.org`)"
+      - "traefik.http.routers.gitea.entrypoints=websecure"
+      - "traefik.http.routers.gitea.tls.certresolver=le"
+      - "traefik.http.routers.gitea.middlewares=authelia-auth@file"
+      - "traefik.http.services.gitea.loadbalancer.server.port=3000"
+
+  gitea-db:
+    image: postgres:15-alpine
+    container_name: gitea-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - gitea-db-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+volumes:
+  gitea-data:
+  gitea-db-data:
+
+networks:
+  proxy:
+    external: true
+  internal:
+    internal: true
