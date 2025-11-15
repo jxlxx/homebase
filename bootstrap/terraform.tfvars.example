@@ -1,4 +1,4 @@
 bucket_name              = "homebase-terraform-state"
-object_storage_region    = "eu-central"
-object_storage_endpoint  = "https://fsn1.contabo.objects.cdn.hetzner.com"
+object_storage_region    = "eu-central-1"
+object_storage_endpoint  = "https://REPLACE_WITH_YOUR_HETZNER_ENDPOINT"
 # object_storage_access_key and object_storage_secret_key should be passed via env or a secrets manager
