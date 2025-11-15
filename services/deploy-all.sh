@@ -22,6 +22,12 @@ stacks=(
 for stack in "${stacks[@]}"; do
   compose_file="${stack}/docker-compose.yml"
   if [[ -f "$compose_file" ]]; then
+    env_file="${stack}/.env"
+    env_example="${stack}/.env.example"
+    if [[ ! -f "$env_file" && -f "$env_example" ]]; then
+      echo "No .env found for $stack; copying defaults"
+      cp "$env_example" "$env_file"
+    fi
     echo "Deploying $stack"
     docker compose -f "$compose_file" up -d
   fi
