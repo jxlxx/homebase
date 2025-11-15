@@ -1,41 +1,45 @@
-# Bootstrap Remote State
+# Bootstrap Remote State (Hetzner Object Storage)
 
-This directory creates the Linode Object Storage bucket and access keys used for Terraform/Terragrunt remote state.
+This module creates an S3-compatible bucket inside Hetzner Object Storage (or any other S3 endpoint you configure) for Terraform/Terragrunt state.
 
 ## Prerequisites
 
 - Terraform >= 1.5
-- Linode API token exported before running: `export LINODE_TOKEN="..."`
+- Access/secret keys for your Hetzner Object Storage project (generate them in the Hetzner Cloud Console; Terraform cannot create them programmatically yet)
+- The object storage project itself already provisioned
+
+Export the credentials before running:
+
+```bash
+export TF_VAR_object_storage_access_key="<hetzner-access-key>"
+export TF_VAR_object_storage_secret_key="<hetzner-secret-key>"
+```
+
+Alternatively, place them inside `terraform.tfvars` (do **not** commit secrets).
 
 ## One-time bootstrap
 
-1. Copy `terraform.tfvars.example` to `terraform.tfvars` (or set variables via CLI) and fill in the bucket label/cluster you prefer.
-2. Run Terraform locally (the default backend is local; see `backend-local.tf`).
+1. Copy `terraform.tfvars.example` to `terraform.tfvars` and set:
+   - `bucket_name`: unique state bucket name
+   - `object_storage_endpoint`: e.g., `https://fsn1.your-object-storage-endpoint`
+   - `object_storage_region`: any string (Hetzner ignores it, but the AWS backend requires a value, e.g., `eu-central`)
+2. Initialize and apply:
 
-```bash
-cd bootstrap
-terraform init
-terraform apply
-```
+   ```bash
+   cd bootstrap
+   terraform init
+   terraform apply
+   ```
 
-This creates:
-
-- An Object Storage bucket for state files
-- A dedicated access key/secret for the Terraform backend
-
-> The secret access key is returned **once**. Store it securely (e.g., password manager) and do not commit it to Git.
+3. Record the bucket name, region string, and endpoint (outputs print them). Terragrunt uses these values in `infra/live/terragrunt.hcl`.
 
 ## Wiring Terragrunt
 
-After the bucket exists, update `infra/live/terragrunt.hcl` with the bucket name, cluster/region, and S3 endpoint that terraform output.
-
-Export the Object Storage credentials before running Terragrunt:
+Set these environment variables whenever you run Terragrunt:
 
 ```bash
-export LINODE_OBJ_ACCESS_KEY="$(terraform -chdir=bootstrap output -raw access_key_id)"
-export LINODE_OBJ_SECRET_KEY="$(terraform -chdir=bootstrap output -raw secret_access_key)"
+export OBJECT_STORAGE_ACCESS_KEY="<hetzner-access-key>"
+export OBJECT_STORAGE_SECRET_KEY="<hetzner-secret-key>"
 ```
 
-(Or store them in a secure secrets manager.)
-
-Terragrunt uses those environment variables when configuring the `remote_state` block.
+Update `infra/live/terragrunt.hcl` to match the outputs (bucket name, region string, endpoint URL). All stacks then use the S3 backend configured there.
