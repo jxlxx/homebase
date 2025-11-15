@@ -81,6 +81,8 @@ cp traefik/.env.example traefik/.env    # repeat for each service and edit secre
 
 `deploy-all.sh` ensures the shared `proxy` network exists and then runs `docker compose up -d` for Traefik, Authelia, Home, Gitea, Matrix, HedgeDoc, and Excalidraw. Manage any stack individually with `docker compose -f services/<stack>/docker-compose.yml up -d`.
 
+- **Matrix Synapse** uses a templated config: edit `services/matrix/.env` (copied from `.env.example`) with your secrets and domain, and `services/deploy-all.sh` automatically renders `services/matrix/config/homeserver.yaml` from `homeserver.yaml.example` on each deploy. You can still customize the rendered file afterwards (it’s ignored by Git) if you need additional tweaks.
+
 **Private repository tips**
 
 - Use an SSH deploy key dedicated to this repo, store the private half securely, and extend `infra/cloud-init/apps-node.yaml` to drop it into `/root/.ssh` when rendering user data (avoid committing the key; reference it via environment variables when templating).
