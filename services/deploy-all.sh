@@ -66,6 +66,14 @@ for stack in "${stacks[@]}"; do
       echo "No .env found for $stack; copying defaults"
       cp "$env_example" "$env_file"
     fi
+    if [[ "$stack" == "traefik" ]]; then
+      mkdir -p "${stack}/letsencrypt"
+      if [[ ! -f "${stack}/letsencrypt/acme.json" ]]; then
+        echo "Creating traefik ACME store"
+        touch "${stack}/letsencrypt/acme.json"
+        chmod 600 "${stack}/letsencrypt/acme.json"
+      fi
+    fi
     if [[ "$stack" == "matrix" ]]; then
       for cfg in homeserver.yaml log.config; do
         cfg_path="${stack}/config/${cfg}"
