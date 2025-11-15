@@ -48,7 +48,7 @@ Terragrunt uses the same object-storage credentials from the environment variabl
 
 All live stacks reside under `infra/live`.
 
-1. **Apps node** – creates a Hetzner Cloud server that runs all Docker workloads via cloud-init:
+1. **Apps node** – creates a Hetzner Cloud server that runs all Docker workloads via cloud-init. Before applying, edit `infra/live/prod/apps-node-1/terragrunt.hcl` to set `repo_url` (SSH or HTTPS clone URL) and `repo_branch` (e.g., `main`, `develop`) so the machine checks out the correct branch:
 
    ```bash
    cd infra/live/prod/apps-node-1
@@ -56,7 +56,7 @@ All live stacks reside under `infra/live`.
    terragrunt apply
    ```
 
-   Parameters such as location, server type, SSH key name, and Git repo URL are set inside the Terragrunt file. Update them as needed before applying.
+   Parameters such as location, server type, SSH key name, repo URL, and branch are set inside the Terragrunt file. Update them as needed before applying. For private repositories, you can either embed a short-lived personal access token in the HTTPS URL or configure an SSH deploy key and switch `repo_url` to the SSH form (`git@...`) after adding the key to cloud-init (see notes below).
 
 2. **DNS** – provisions the `jxlxx.org` zone using Hetzner DNS and creates A records for every service (including Authelia at `auth.jxlxx.org`):
 
@@ -80,6 +80,12 @@ cp traefik/.env.example traefik/.env    # repeat for each service and edit secre
 ```
 
 `deploy-all.sh` ensures the shared `proxy` network exists and then runs `docker compose up -d` for Traefik, Authelia, Home, Gitea, Matrix, HedgeDoc, and Excalidraw. Manage any stack individually with `docker compose -f services/<stack>/docker-compose.yml up -d`.
+
+**Private repository tips**
+
+- Use an SSH deploy key dedicated to this repo, store the private half securely, and extend `infra/cloud-init/apps-node.yaml` to drop it into `/root/.ssh` when rendering user data (avoid committing the key; reference it via environment variables when templating).
+- Alternatively, supply an HTTPS URL that embeds a Git provider access token (e.g., `https://<token>@github.com/org/homebase.git`) and rotate the token frequently.
+- `repo_branch` in Terragrunt controls which branch cloud-init checks out (`git fetch && git checkout <branch>`), so you can spin up preview environments from feature branches without rewriting the template.
 
 ## 5. Authentication management
 
