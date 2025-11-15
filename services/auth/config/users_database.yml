@@ -1,0 +1,7 @@
+users:
+  - username: admin
+    displayname: Admin User
+    email: admin@jxlxx.org
+    groups:
+      - admins
+    password: "$argon2id$v=19$m=65536,t=3,p=4$rltK7GiczvF1j3NO2pEujg$o+fPDWLFC6CuWFx02HqiOmRbbIo5T+HjUxG4FCwc8kk"

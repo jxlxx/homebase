@@ -1,0 +1,14 @@
+!.ignore
+!.gitignore
+
+!*.tfvars
+!*.tfvars.json
+!override.tf
+!override.tf.json
+!*_override.tf
+!*_override.tf.json
+
+# Local env files
+!.env*
+!**/.env
+

@@ -1,0 +1,43 @@
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log:
+  level: info
+
+default_redirection_url: https://home.jxlxx.org
+
+totp:
+  issuer: jxlxx.org
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain:
+        - git.jxlxx.org
+        - matrix.jxlxx.org
+        - hedgedoc.jxlxx.org
+        - excalidraw.jxlxx.org
+        - home.jxlxx.org
+      policy: one_factor
+
+session:
+  name: authelia_session
+  secret: REPLACE_WITH_LONG_RANDOM_VALUE
+  expiration: 1h
+  inactivity: 5m
+  domain: jxlxx.org
+  same_site: lax
+
+storage:
+  encryption_key: REPLACE_WITH_LONG_RANDOM_VALUE
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt

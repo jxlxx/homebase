@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  hedgedoc:
+    image: quay.io/hedgedoc/hedgedoc:1.10.0
+    container_name: hedgedoc
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - hedgedoc-db
+    networks:
+      - proxy
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hedgedoc.rule=Host(`hedgedoc.jxlxx.org`)"
+      - "traefik.http.routers.hedgedoc.entrypoints=websecure"
+      - "traefik.http.routers.hedgedoc.tls.certresolver=le"
+      - "traefik.http.routers.hedgedoc.middlewares=authelia-auth@file"
+      - "traefik.http.services.hedgedoc.loadbalancer.server.port=3000"
+
+  hedgedoc-db:
+    image: postgres:15-alpine
+    container_name: hedgedoc-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - hedgedoc-db-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+volumes:
+  hedgedoc-db-data:
+
+networks:
+  proxy:
+    external: true
+  internal:
+    internal: true
