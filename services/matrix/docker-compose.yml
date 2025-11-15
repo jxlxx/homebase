@@ -11,6 +11,8 @@ services:
       - synapse-db
     volumes:
       - synapse-data:/data
+      - ./config/homeserver.yaml:/data/homeserver.yaml:ro
+      - ./config/log.config:/data/log.config:ro
     networks:
       - proxy
       - internal
@@ -36,7 +38,9 @@ services:
 
 volumes:
   synapse-data:
+    name: matrix_synapse-data
   synapse-db-data:
+    name: matrix_synapse-db-data
 
 networks:
   proxy:

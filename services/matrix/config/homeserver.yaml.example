@@ -1,0 +1,39 @@
+server_name: "${SYNAPSE_SERVER_NAME}"
+public_baseurl: "${SYNAPSE_PUBLIC_BASEURL}"
+pid_file: /data/homeserver.pid
+report_stats: ${SYNAPSE_REPORT_STATS}
+
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client]
+        compress: false
+      - names: [federation]
+        compress: false
+
+trusted_key_servers:
+  - server_name: matrix.org
+
+media_store_path: /data/media_store
+log_config: /data/log.config
+
+registration_shared_secret: "${SYNAPSE_REGISTRATION_SHARED_SECRET}"
+form_secret: "${SYNAPSE_FORM_SECRET}"
+macaroon_secret_key: "${SYNAPSE_MACAROON_SECRET_KEY}"
+
+allow_public_rooms_without_auth: false
+allow_public_rooms_over_federation: true
+
+database:
+  name: psycopg2
+  args:
+    user: "${SYNAPSE_POSTGRES_USER}"
+    password: "${SYNAPSE_POSTGRES_PASSWORD}"
+    database: "${SYNAPSE_POSTGRES_DB}"
+    host: "${SYNAPSE_POSTGRES_HOST}"
+    port: ${SYNAPSE_POSTGRES_PORT}
+    cp_min: 5
+    cp_max: 10
