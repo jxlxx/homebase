@@ -3,24 +3,27 @@ include {
 }
 
 terraform {
-  source = "../../../modules/linode_node"
+  source = "../../../modules/hetzner_server"
 }
 
 locals {
-  repo_url     = "REPLACE_WITH_YOUR_REPO_URL"
-  instance_tag = "apps-node-1"
+  repo_url = "REPLACE_WITH_YOUR_REPO_URL"
 }
 
 inputs = {
-  label         = "apps-node-1"
-  region        = "us-southeast"
-  type          = "g6-standard-2"
-  image         = "linode/ubuntu24.04"
-  ssh_keys      = ["REPLACE_WITH_SSH_PUBKEY"]
-  root_password = get_env("LINODE_ROOT_PASS", "")
-  backups       = true
-  tags          = ["homebase", local.instance_tag, "prod"]
-  user_data     = templatefile("${get_repo_root()}/infra/cloud-init/apps-node.yaml", {
+  name         = "apps-node-1"
+  location     = "fsn1"
+  server_type  = "cx21"
+  image        = "ubuntu-24.04"
+  ssh_keys     = ["REPLACE_WITH_HCLOUD_SSH_KEY_NAME"]
+  backups      = true
+  enable_ipv6  = true
+  labels = {
+    project = "homebase"
+    env     = "prod"
+    role    = "apps"
+  }
+  user_data = templatefile("${get_repo_root()}/infra/cloud-init/apps-node.yaml", {
     repo_url = local.repo_url
   })
 }

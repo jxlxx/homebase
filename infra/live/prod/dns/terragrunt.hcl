@@ -3,7 +3,7 @@ include {
 }
 
 terraform {
-  source = "../../../modules/linode_dns"
+  source = "../../../modules/hetzner_dns"
 }
 
 dependency "apps" {
@@ -13,23 +13,16 @@ dependency "apps" {
 locals {
   domain     = "jxlxx.org"
   app_ip     = dependency.apps.outputs.ipv4
-  subdomains = ["git", "matrix", "hedgedoc", "excalidraw", "home"]
+  subdomains = ["git", "matrix", "hedgedoc", "excalidraw", "home", "auth"]
 }
 
 inputs = {
-  domain    = local.domain
-  soa_email = "hostmaster@${local.domain}"
-  tags      = ["homebase", "prod"]
-  records   = concat(
-    [for subdomain in local.subdomains : {
-      name   = subdomain
-      type   = "A"
-      target = local.app_ip
-    }],
-    [{
-      name   = "auth"
-      type   = "A"
-      target = local.app_ip
-    }]
-  )
+  domain  = local.domain
+  records = [
+    for subdomain in local.subdomains : {
+      name  = subdomain
+      type  = "A"
+      value = local.app_ip
+    }
+  ]
 }

@@ -1,23 +1,27 @@
-variable "linode_token" {
-  description = "Personal access token with Object Storage and Domains permissions"
+variable "object_storage_access_key" {
+  description = "Access key for Hetzner Object Storage (manually created)"
   type        = string
   sensitive   = true
 }
 
-variable "bucket_label" {
-  description = "Unique label for the Terraform state bucket"
+variable "object_storage_secret_key" {
+  description = "Secret key for Hetzner Object Storage"
   type        = string
-  default     = "homebase-terraform-state"
+  sensitive   = true
 }
 
-variable "bucket_cluster" {
-  description = "Object Storage cluster (e.g., us-southeast-1)"
+variable "object_storage_endpoint" {
+  description = "S3 endpoint, e.g., https://fsn1.your-object-storage-endpoint"
   type        = string
-  default     = "us-southeast-1"
 }
 
-variable "access_key_label" {
-  description = "Label for the generated Object Storage access key"
+variable "object_storage_region" {
+  description = "Region required by the AWS provider (can match the endpoint region)"
   type        = string
-  default     = "homebase-terraform"
+  default     = "eu-central"
+}
+
+variable "bucket_name" {
+  description = "Unique bucket name for Terraform state"
+  type        = string
 }

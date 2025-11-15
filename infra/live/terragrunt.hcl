@@ -1,20 +1,20 @@
 locals {
-  project       = "homebase"
-  environment   = "prod"
-  bucket_name   = "REPLACE_WITH_BUCKET_LABEL"
-  bucket_region = "us-southeast-1"
-  bucket_endpoint = "us-southeast-1.linodeobjects.com"
+  project          = "homebase"
+  environment      = "prod"
+  bucket_name      = "REPLACE_WITH_BUCKET_NAME"
+  bucket_region    = "nuremberg"
+  bucket_endpoint  = "https://REPLACE_WITH_OBJECT_STORAGE_ENDPOINT"
 }
 
 remote_state {
   backend = "s3"
   config = {
-    bucket         = local.bucket_name
-    key            = "${path_relative_to_include()}/terraform.tfstate"
-    region         = local.bucket_region
-    endpoint       = local.bucket_endpoint
-    access_key     = get_env("LINODE_OBJ_ACCESS_KEY")
-    secret_key     = get_env("LINODE_OBJ_SECRET_KEY")
+    bucket                      = local.bucket_name
+    key                         = "${path_relative_to_include()}/terraform.tfstate"
+    region                      = local.bucket_region
+    endpoint                    = local.bucket_endpoint
+    access_key                  = get_env("OBJECT_STORAGE_ACCESS_KEY")
+    secret_key                  = get_env("OBJECT_STORAGE_SECRET_KEY")
     skip_region_validation      = true
     skip_credentials_validation = true
     skip_requesting_account_id  = true
@@ -23,7 +23,8 @@ remote_state {
 }
 
 inputs = {
-  linode_token = get_env("LINODE_TOKEN")
+  hcloud_token          = get_env("HCLOUD_TOKEN")
+  hetznerdns_api_token  = get_env("HETZNER_DNS_API_TOKEN")
 }
 
 generate "provider" {
@@ -32,21 +33,35 @@ generate "provider" {
   contents  = <<EOF2
 terraform {
   required_providers {
-    linode = {
-      source  = "linode/linode"
-      version = ">= 2.29.0"
+    hcloud = {
+      source  = "hetznercloud/hcloud"
+      version = ">= 1.45.0"
+    }
+    hetznerdns = {
+      source  = "timohirt/hetznerdns"
+      version = ">= 3.2.0"
     }
   }
 }
 
-variable "linode_token" {
-  description = "Linode API token"
+variable "hcloud_token" {
   type        = string
+  description = "Hetzner Cloud API token"
   sensitive   = true
 }
 
-provider "linode" {
-  token = var.linode_token
+variable "hetznerdns_api_token" {
+  type        = string
+  description = "Hetzner DNS API token"
+  sensitive   = true
+}
+
+provider "hcloud" {
+  token = var.hcloud_token
+}
+
+provider "hetznerdns" {
+  api_token = var.hetznerdns_api_token
 }
 EOF2
 }
