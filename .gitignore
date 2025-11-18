@@ -19,6 +19,7 @@ override.tf.json
 # Docker artifacts
 services/traefik/letsencrypt/acme.json
 services/matrix/config/homeserver.yaml
+services/gitea/config/app.ini
 
 # macOS
 .DS_Store

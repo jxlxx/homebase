@@ -86,6 +86,7 @@ cp traefik/.env.example traefik/.env    # repeat for each service and edit secre
 
 - **Matrix Synapse** uses a templated config: edit `services/matrix/.env` (copied from `.env.example`) with your secrets and domain, and `services/deploy-all.sh` automatically renders `services/matrix/config/homeserver.yaml` from `homeserver.yaml.example` on each deploy. You can still customize the rendered file afterwards (it’s ignored by Git) if you need additional tweaks.
 - The `.env.example` now ships with `POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C --lc-collate=C --lc-ctype=C` so new Postgres volumes satisfy Synapse’s `C` collation requirement. If you previously created the `matrix_synapse-db-data` volume without those settings, delete it (`docker volume rm matrix_synapse-db-data`) and rerun `docker compose -f services/matrix/docker-compose.yml up -d` so Postgres reinitialises with the correct locale.
+- **Gitea** also renders its config from `services/gitea/config/app.ini.tmpl`. Edit `services/gitea/.env` to set the database password plus the required secrets (`GITEA_SECRET_KEY`, `GITEA_INTERNAL_TOKEN`, `GITEA_JWT_SECRET`) before running `deploy-all.sh`; the script generates `config/app.ini`, mounts it into the container, and Gitea skips the interactive installer entirely.
 
 **Private repository tips**
 

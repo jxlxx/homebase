@@ -1,0 +1,51 @@
+APP_NAME = ${GITEA_APP_NAME}
+RUN_MODE = prod
+RUN_USER = git
+
+[database]
+DB_TYPE  = ${GITEA__database__DB_TYPE}
+HOST     = ${GITEA__database__HOST}
+NAME     = ${GITEA__database__NAME}
+USER     = ${GITEA__database__USER}
+PASSWD   = ${GITEA__database__PASSWD}
+SSL_MODE = disable
+PATH     = /var/lib/gitea/data/gitea.db
+
+[server]
+DOMAIN       = ${GITEA_DOMAIN}
+HTTP_ADDR    = 0.0.0.0
+HTTP_PORT    = 3000
+ROOT_URL     = ${GITEA__server__ROOT_URL}
+PROTOCOL     = http
+DISABLE_SSH  = true
+SSH_DOMAIN   = ${GITEA_DOMAIN}
+LFS_START_SERVER = false
+
+[service]
+DISABLE_REGISTRATION              = true
+ALLOW_ONLY_EXTERNAL_REGISTRATION  = true
+ENABLE_NOTIFY_MAIL                = false
+ENABLE_CAPTCHA                    = false
+REQUIRE_SIGNIN_VIEW               = true
+DEFAULT_KEEP_EMAIL_PRIVATE        = true
+DEFAULT_ALLOW_CREATE_ORGANIZATION = false
+ENABLE_USER_HEATMAP               = false
+
+[security]
+INSTALL_LOCK  = true
+SECRET_KEY    = ${GITEA_SECRET_KEY}
+INTERNAL_TOKEN = ${GITEA_INTERNAL_TOKEN}
+
+[oauth2]
+JWT_SECRET = ${GITEA_JWT_SECRET}
+
+[repository]
+DEFAULT_BRANCH = main
+
+[ui]
+SHOW_USER_EMAIL = false
+
+[log]
+MODE = console
+LEVEL = info
+ENABLE_XORM_LOG = false

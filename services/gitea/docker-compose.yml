@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   gitea:
-    image: gitea/gitea:1.21.11-rootless
+    image: docker.gitea.com/gitea:1.25.1-rootless
     container_name: gitea
     restart: unless-stopped
     env_file:
@@ -11,6 +11,7 @@ services:
       - gitea-db
     volumes:
       - gitea-data:/var/lib/gitea
+      - ./config/app.ini:/etc/gitea/app.ini:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:

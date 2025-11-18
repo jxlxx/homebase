@@ -66,15 +66,17 @@ for stack in "${stacks[@]}"; do
       echo "No .env found for $stack; copying defaults"
       cp "$env_example" "$env_file"
     fi
-    if [[ "$stack" == "traefik" ]]; then
+
+    case "$stack" in
+    traefik)
       mkdir -p "${stack}/letsencrypt"
       if [[ ! -f "${stack}/letsencrypt/acme.json" ]]; then
         echo "Creating traefik ACME store"
         touch "${stack}/letsencrypt/acme.json"
         chmod 600 "${stack}/letsencrypt/acme.json"
       fi
-    fi
-    if [[ "$stack" == "matrix" ]]; then
+      ;;
+    matrix)
       for cfg in homeserver.yaml log.config; do
         cfg_path="${stack}/config/${cfg}"
         if [[ ! -f "$cfg_path" && -f "${cfg_path}.example" ]]; then
@@ -82,11 +84,17 @@ for stack in "${stacks[@]}"; do
           cp "${cfg_path}.example" "$cfg_path"
         fi
       done
-    fi
+      render_template "$env_file" "${stack}/config/homeserver.yaml.example" "${stack}/config/homeserver.yaml"
+      ;;
+    gitea)
+      render_template "$env_file" "${stack}/config/app.ini.tmpl" "${stack}/config/app.ini"
+      ;;
+    esac
+
     echo "Deploying $stack"
     docker compose -f "$compose_file" up -d
+
     if [[ "$stack" == "matrix" ]]; then
-      render_template "$env_file" "${stack}/config/homeserver.yaml.example" "${stack}/config/homeserver.yaml"
       if docker volume inspect matrix_synapse-data >/dev/null 2>&1; then
         echo "Ensuring permissions on matrix_synapse-data volume"
         docker run --rm -v matrix_synapse-data:/data alpine:3.20 sh -c "chown -R 991:991 /data" >/dev/null 2>&1 || true
