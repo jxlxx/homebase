@@ -21,5 +21,6 @@ runcmd:
   - systemctl enable docker --now
   - mkdir -p /opt
   - git clone --branch ${repo_branch} ${repo_url} /opt/homebase
+  - echo "ACME_CA_SERVER=${acme_ca_server}" >> /opt/homebase/services/traefik/.env
   - cd /opt/homebase && docker compose -f services/traefik/docker-compose.yml up -d
   - cd /opt/homebase/services && chmod +x deploy-all.sh && ./deploy-all.sh

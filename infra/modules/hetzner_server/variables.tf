@@ -25,10 +25,26 @@ variable "ssh_keys" {
   default     = []
 }
 
-variable "user_data" {
-  description = "Cloud-init user data"
+variable "repo_url" {
+  description = "Git repository URL that cloud-init should clone"
   type        = string
-  default     = ""
+}
+
+variable "repo_branch" {
+  description = "Git branch to checkout"
+  type        = string
+  default     = "main"
+}
+
+variable "letsencrypt_environment" {
+  description = "ACME environment to target (prod or staging)"
+  type        = string
+  default     = "prod"
+
+  validation {
+    condition     = contains(["prod", "staging"], lower(var.letsencrypt_environment))
+    error_message = "letsencrypt_environment must be \"prod\" or \"staging\"."
+  }
 }
 
 variable "labels" {

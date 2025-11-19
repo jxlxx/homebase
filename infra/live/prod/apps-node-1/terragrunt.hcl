@@ -6,11 +6,6 @@ terraform {
   source = "../../../modules/hetzner_server"
 }
 
-locals {
-  repo_url    = "https://github.com/jxlxx/homebase.git"
-  repo_branch = "main"
-}
-
 inputs = {
   name         = "apps-node-1"
   location     = "fsn1"
@@ -24,8 +19,7 @@ inputs = {
     env     = "prod"
     role    = "apps"
   }
-  user_data = templatefile("${get_repo_root()}/infra/cloud-init/apps-node.yaml", {
-    repo_url    = local.repo_url
-    repo_branch = local.repo_branch
-  })
+  repo_url                = "https://github.com/jxlxx/homebase.git"
+  repo_branch             = "main"
+  letsencrypt_environment = "staging"
 }

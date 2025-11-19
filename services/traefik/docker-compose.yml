@@ -19,6 +19,7 @@ services:
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --certificatesresolvers.le.acme.tlschallenge=true
       - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.caserver=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --log.level=${TRAEFIK_LOG_LEVEL:-INFO}
     ports:

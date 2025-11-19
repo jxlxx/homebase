@@ -57,7 +57,7 @@ All live stacks reside under `infra/live`.
    terragrunt apply
    ```
 
-   Parameters such as location, server type, SSH key name, repo URL, and branch are set inside the Terragrunt file. Update them as needed before applying. For private repositories, you can either embed a short-lived personal access token in the HTTPS URL or configure an SSH deploy key and switch `repo_url` to the SSH form (`git@...`) after adding the key to cloud-init (see notes below).
+   Parameters such as location, server type, SSH key name, repo URL, and branch are set inside the Terragrunt file. Update them as needed before applying. For private repositories, you can either embed a short-lived personal access token in the HTTPS URL or configure an SSH deploy key and switch `repo_url` to the SSH form (`git@...`) after adding the key to cloud-init (see notes below). The module also exposes `letsencrypt_environment`, so you can temporarily switch to Let's Encrypt staging with `LETSENCRYPT_ENV=staging terragrunt apply`; the rendered cloud-init now writes the matching `ACME_CA_SERVER` value into `/opt/homebase/services/traefik/.env` before Traefik starts.
 
 2. **DNS** – provisions the `jxlxx.org` zone on Cloudflare and creates A records for every service (including Authelia at `auth.jxlxx.org`):
 
@@ -106,6 +106,7 @@ cp traefik/.env.example traefik/.env    # repeat for each service and edit secre
 - Change hostnames in service Traefik labels, Authelia config, and `.env` files as needed.
 - Update `infra/live/prod/dns/terragrunt.hcl` for new records, then re-run Terragrunt in that directory.
 - Traefik automatically manages Let’s Encrypt certificates and stores them inside `services/traefik/letsencrypt/acme.json` on the server.
+- If you’re iterating quickly or you hit the "too many certificates" Let’s Encrypt rate limit, rerun the apps stack with `LETSENCRYPT_ENV=staging terragrunt apply`. Cloud-init re-clones the repo and overwrites `/opt/homebase/services/traefik/.env` with the staging CA URL before `deploy-all.sh` runs. For an already-live host you can edit `/srv/homebase/services/traefik/.env` manually and restart Traefik, but managing it via Terragrunt keeps the configuration reproducible. Remember to switch back to production once testing is done.
 
 ## 7. Destroying resources
 
